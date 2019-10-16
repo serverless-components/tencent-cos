@@ -10,7 +10,6 @@ Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless 
 2. [Create](#2-create)
 3. [Configure](#3-configure)
 4. [Deploy](#4-deploy)
-5. [Upload](#5-upload)
 
 &nbsp;
 
