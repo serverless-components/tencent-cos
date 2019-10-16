@@ -2,7 +2,7 @@
 
 Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless Components](https://github.com/serverless/components).
 
-**Note:** I've added helpful comments in the `serverless.js` file that explains the typical lifecycle of a this and most other components. [Check it out here](https://github.com/serverless-tencent/tencent-cos-component/blob/master/serverless.js)
+**Note:** I've added helpful comments in the `serverless.js` file that explains the typical lifecycle of a this and most other components. [Check it out here.](https://github.com/serverless-tencent/tencent-cos-component/blob/master/serverless.js)
 
 &nbsp;
 
