@@ -10,6 +10,7 @@ Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless 
 2. [Create](#2-create)
 3. [Configure](#3-configure)
 4. [Deploy](#4-deploy)
+5. [Remove](#5-remove)
 
 &nbsp;
 
@@ -59,7 +60,13 @@ myBucket:
 ### 4. Deploy
 
 ```console
-$ serverless
+$ serverless --debug
+```
+
+### 5. Remove
+
+```console
+$ serverless remove --debug
 ```
 
 ### New to Components?
