@@ -49,12 +49,32 @@ myBucket:
     # Required
     Bucket: myBucket-myApiId
     Region: ap-guanzhou
-    
-    # Optional
+
+    # ACL (Optional)
     ACL: STRING_VALUE
     GrantRead: STRING_VALUE
     GrantWrite: STRING_VALUE
     GrantFullControl: STRING_VALUE
+
+    # CORS (Optional)
+    CORSRules:
+      - ID: abc
+        MaxAgeSeconds: '10'
+        AllowedMethods:
+          - GET
+        AllowedOrigins:
+          - https://tencent.com
+        AllowedHeaders:
+          - FIRST_ALLOWED_HEADER
+        ExposeHeaders:
+          - FIRST_EXPOSED_HEADER
+
+    # Tags (Optional)
+    Tags:
+      - Key: abc
+        Value: xyz
+      - Key: abc
+        Value: xyz
 ```
 
 ### 4. Deploy

@@ -6,7 +6,14 @@ const COS = require('cos-nodejs-sdk-v5')
 // I've created a helpful method that returns a promised client
 // for the methods needed for this component
 const getSdk = (credentials) => {
-  const methods = ['putBucket', 'deleteBucket']
+  const methods = [
+    'putBucket',
+    'deleteBucket',
+    'putBucketCors',
+    'deleteBucketCors',
+    'putBucketTagging',
+    'deleteBucketTagging'
+  ]
 
   var cos = new COS(credentials)
 
@@ -31,7 +38,7 @@ class TencentCOS extends Component {
   async default(inputs = {}) {
     // Since this is a low level component, I think it's best to surface
     // all service API inputs as is to avoid confusion and enable all features of the service
-    const { Bucket, Region, ACL, GrantRead, GrantWrite, GrantFullControl } = inputs
+    const { Bucket, Region, ACL, GrantRead, GrantWrite, GrantFullControl, CORSRules, Tags } = inputs
 
     const sdk = getSdk(this.context.credentials.tencent)
 
@@ -43,6 +50,7 @@ class TencentCOS extends Component {
       // the first step of replacing is to remove
       // the old bucket using data in the state
       await this.remove()
+      // then we move on to create the new bucket
     }
 
     const params = {
@@ -57,6 +65,44 @@ class TencentCOS extends Component {
     this.context.debug(`Deploying "${Bucket}" bucket in the "${Region}" region.`)
     await sdk.putBucket(params)
     this.context.debug(`"${Bucket}" bucket was successfully deployed to the "${Region}" region.`)
+
+    // If user set Cors Rules, update the bucket with those
+    if (CORSRules) {
+      this.context.debug(`Setting CORS rules for "${Bucket}" bucket in the "${Region}" region.`)
+      const putBucketCorsParams = {
+        Bucket,
+        Region,
+        CORSRules
+      }
+      await sdk.putBucketCors(putBucketCorsParams)
+    } else {
+      // otherwise, make sure the bucket doesn't have
+      // any Cors rules to reflect what is defined in the config
+      this.context.debug(
+        `Ensuring no CORS are set for "${Bucket}" bucket in the "${Region}" region.`
+      )
+      const deleteBucketCorsParams = { Bucket, Region }
+      await sdk.deleteBucketCors(deleteBucketCorsParams)
+    }
+
+    // If the user set Tags, update the bucket with those
+    if (Tags) {
+      this.context.debug(`Setting Tags for "${Bucket}" bucket in the "${Region}" region.`)
+      const putBucketTaggingParams = {
+        Bucket,
+        Region,
+        Tags
+      }
+      await sdk.putBucketTagging(putBucketTaggingParams)
+    } else {
+      // otherwise, make sure the bucket doesn't have
+      // any Tags to reflect what is defined in the config
+      this.context.debug(
+        `Ensuring no Tags are set for "${Bucket}" bucket in the "${Region}" region.`
+      )
+      const deleteBucketTaggingParams = { Bucket, Region }
+      await sdk.deleteBucketTagging(deleteBucketTaggingParams)
+    }
 
     // Save any state data required for the remove operation
     // or any other operation required after deployment.
