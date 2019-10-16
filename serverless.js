@@ -55,7 +55,7 @@ class TencentCOS extends Component {
     }
 
     this.context.debug(`Deploying "${Bucket}" bucket in the "${Region}" region.`)
-    const outputs = await sdk.putBucket(params)
+    await sdk.putBucket(params)
     this.context.debug(`"${Bucket}" bucket was successfully deployed to the "${Region}" region.`)
 
     // Save any state data required for the remove operation
@@ -69,7 +69,8 @@ class TencentCOS extends Component {
     await this.save()
 
     // return the outputs of the deployments
-    return outputs
+    // in this case, they're simply the same as inputs
+    return inputs
   }
 
   async remove(inputs = {}) {
