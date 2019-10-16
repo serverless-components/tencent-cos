@@ -6,7 +6,7 @@ const COS = require('cos-nodejs-sdk-v5')
 // I've created a helpful method that returns a promised client
 // for the methods needed for this component
 const getSdk = (credentials) => {
-  const methods = ['putBucket']
+  const methods = ['putBucket', 'deleteBucket']
 
   var cos = new COS(credentials)
 
