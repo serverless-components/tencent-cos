@@ -45,7 +45,15 @@ TENCENT_APP_ID=123
 myBucket:
   component: '@serverless/tencent-cos'
   inputs:
-    Bucket: abc
+    # Required
+    Bucket: myBucket-myApiId
+    Region: ap-guanzhou
+    
+    # Optional
+    ACL: STRING_VALUE
+    GrantRead: STRING_VALUE
+    GrantWrite: STRING_VALUE
+    GrantFullControl: STRING_VALUE
 ```
 
 ### 4. Deploy
