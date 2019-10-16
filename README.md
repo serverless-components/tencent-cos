@@ -25,7 +25,7 @@ Just create `serverless.yml` and `.env` files
 
 ```console
 $ touch serverless.yml
-$ touch .env      # your Tenncet API Keys
+$ touch .env # your Tenncet API Keys
 ```
 
 Set Tencent credentials in the `.env` file.
