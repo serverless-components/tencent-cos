@@ -53,6 +53,7 @@ class TencentCOS extends Component {
       // then we move on to create the new bucket
     }
 
+    // Deploy the bucket along with the ACL config in a single call
     const params = {
       Bucket,
       Region,
