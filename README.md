@@ -47,17 +47,18 @@ myBucket:
   component: '@serverless/tencent-cos'
   inputs:
     # Required
-    Bucket: myBucket-myApiId
+    Bucket: myBucket-1300418943 # bucket name with AppId suffix
     Region: ap-guanzhou
 
     # ACL (Optional)
-    ACL: STRING_VALUE
-    GrantRead: STRING_VALUE
-    GrantWrite: STRING_VALUE
-    GrantFullControl: STRING_VALUE
+    ACL:
+      Permissions: private
+      GrantRead: STRING_VALUE
+      GrantWrite: STRING_VALUE
+      GrantFullControl: STRING_VALUE
 
     # CORS (Optional)
-    CORSRules:
+    CORS:
       - ID: abc
         MaxAgeSeconds: '10'
         AllowedMethods:
