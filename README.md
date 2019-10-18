@@ -48,7 +48,7 @@ myBucket:
   inputs:
     # Required
     Bucket: myBucket-1300418943 # bucket name with AppId suffix
-    Region: ap-guanzhou
+    Region: ap-guangzhou
 
     # ACL (Optional)
     ACL:
