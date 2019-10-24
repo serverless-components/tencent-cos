@@ -52,7 +52,7 @@ myBucket:
   inputs:
     # 必填
     bucket: myBucket-1300418942 # 存储桶后缀需要填写APPID信息
-    region: ap-guangzhou # 需要部署存储桶的地域信息
+    region: eu-frankfurt # 需要部署存储桶的地域信息
 
     # acl配置 (可选)
     acl:
