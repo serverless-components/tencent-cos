@@ -79,13 +79,48 @@ myBucket:
 ### 4. Deploy
 
 ```console
-$ serverless --debug
+myApp (master)$ serverless --debug
+
+  DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
+  DEBUG ─ Setting ACL for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
+  DEBUG ─ Setting CORS rules for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
+  DEBUG ─ Setting Tags for "myBucket-1300418942" bucket in the "undefined" region.
+
+  bucket:
+    bucket: myBucket-1300418942
+    region: eu-frankfurt
+    acl:
+      permissions: private
+    cors:
+      -
+        id:             abc
+        maxAgeSeconds:  10
+        allowedMethods: (max depth reached)
+        allowedOrigins: (max depth reached)
+        allowedHeaders: (max depth reached)
+        exposeHeaders:  (max depth reached)
+    tags:
+      -
+        key:   abc
+        value: xyz
+
+  3s › bucket › done
+
+myApp (master)$
 ```
 
 ### 5. Remove
 
 ```console
-$ serverless remove --debug
+myApp (master)$ serverless remove --debug
+
+  DEBUG ─ Flushing template state and removing all components.
+  DEBUG ─ Removing "myBucket-1300418942" bucket from the "eu-frankfurt" region.
+  DEBUG ─ "myBucket-1300418942" bucket was successfully removed from the "eu-frankfurt" region.
+
+  7s › bucket › done
+
+myApp (master)$
 ```
 
 ### New to Components?
