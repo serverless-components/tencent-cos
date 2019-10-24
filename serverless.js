@@ -24,7 +24,7 @@ const getSdk = ({ SecretId, SecretKey }) => {
     'deleteMultipleObject'
   ]
 
-  var cos = new COS({ SecretId, SecretKey })
+  var cos = new COS({ SecretId, SecretKey }) 
 
   return methods.reduce((accum, method) => {
     accum[method] = util.promisify(cos[method])

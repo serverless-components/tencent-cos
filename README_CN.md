@@ -16,7 +16,7 @@
 
 ### 1. 安装
 
-通过 npm 安装 serverless
+通过 npm 安装 serverless 
 
 ```console
 $ npm install -g serverless
