@@ -1,6 +1,11 @@
 const { Component } = require('@serverless/core')
 const util = require('util')
+const klawSync = require('klaw-sync')
+const path = require('path')
+const fs = require('fs')
+const mime = require('mime-types')
 const COS = require('cos-nodejs-sdk-v5')
+const { utils } = require('@serverless/core')
 
 // because the Tencent SDK does not yet support promises
 // I've created a helpful method that returns a promised client
@@ -9,12 +14,14 @@ const getSdk = ({ SecretId, SecretKey }) => {
   // console.log(credentials)
   const methods = [
     'putBucket',
+    'getBucket',
     'deleteBucket',
     'putBucketAcl',
     'putBucketCors',
     'deleteBucketCors',
     'putBucketTagging',
-    'deleteBucketTagging'
+    'deleteBucketTagging',
+    'deleteMultipleObject'
   ]
 
   var cos = new COS({ SecretId, SecretKey })
@@ -48,7 +55,7 @@ const deployBucket = async (sdk, inputs, state) => {
   } catch (e) {
     // if this is a redeploy of a previously deployed bucket
     // just move on. Otherwise throw an error
-    if (e.error.Code !== 'BucketAlreadyExists' || inputs.bucket !== state.bucket) {
+    if (e.error.Code !== 'BucketAlreadyOwnedByYou' || inputs.bucket !== state.bucket) {
       throw e
     }
   }
@@ -73,10 +80,24 @@ const getTags = (tags) =>
 
 // Create a new component by extending the Component Class
 class TencentCOS extends Component {
-  async default(inputs = {}) {
-    if (!inputs.bucket.includes(this.context.credentials.tencent.AppId)) {
-      inputs.bucket = `${inputs.bucket}-${this.context.credentials.tencent.AppId}`
+  confirmEnding(sourceStr, targetStr) {
+    const start = sourceStr.length - targetStr.length
+    const arr = sourceStr.substr(start, targetStr.length)
+    if (arr == targetStr) {
+      return true
     }
+    return false
+  }
+
+  async default(inputs = {}) {
+    // Since this is a low level component, I think it's best to surface
+    // all service API inputs as is to avoid confusion and enable all features of the service
+    const { region, acl, cors, tags } = inputs
+    let { bucket } = inputs
+
+    bucket = this.confirmEnding(bucket, this.context.credentials.tencent.AppId)
+      ? bucket
+      : bucket + '-' + this.context.credentials.tencent.AppId
 
     const sdk = getSdk(this.context.credentials.tencent)
 
@@ -103,6 +124,7 @@ class TencentCOS extends Component {
       `Setting ACL for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
     )
 
+    if (inputs.acl ? inputs.acl.permissions : undefined){
     const params = {
       Bucket: inputs.bucket,
       Region: inputs.region,
@@ -112,7 +134,8 @@ class TencentCOS extends Component {
       GrantFullControl: inputs.acl ? inputs.acl.grantFullControl : undefined
     }
 
-    await sdk.putBucketAcl(params)
+      await sdk.putBucketAcl(params)
+    }
 
     // If user set Cors Rules, update the bucket with those
     if (inputs.cors) {
@@ -176,29 +199,50 @@ class TencentCOS extends Component {
   async remove(inputs = {}) {
     // for removal, we use state data since the user could change or delete the inputs
     // if no data found in state, we try to remove whatever is in the inputs
-    let Bucket = this.state.bucket || inputs.bucket
-    const Region = this.state.region || inputs.region
+    let bucket = this.state.bucket || inputs.bucket
+    const region = this.state.region || inputs.region
 
     // nothing to be done if there's nothing to remove
-    if (!Bucket || !Region) {
+    if (!bucket || !region) {
       return {}
     }
 
-    if (!Bucket.includes(this.context.credentials.tencent.AppId)) {
-      Bucket = `${Bucket}-${this.context.credentials.tencent.AppId}`
+    if (!bucket.includes(this.context.credentials.tencent.AppId)) {
+      bucket = `${bucket}-${this.context.credentials.tencent.AppId}`
     }
 
     const sdk = getSdk(this.context.credentials.tencent)
 
-    const params = {
-      Bucket,
-      Region
+    try {
+      this.context.debug(`Removing files from the "${bucket}" bucket.`)
+      const fileListResult = await sdk.getBucket({
+        Bucket: bucket,
+        Region: region
+      })
+      const fileList = new Array()
+      if (fileListResult && fileListResult.Contents && fileListResult.Contents.length > 0) {
+        for (let i = 0; i < fileListResult.Contents.length; i++) {
+          fileList.push({
+            Key: fileListResult.Contents[i].Key
+          })
+        }
+        await sdk.deleteMultipleObject({
+          Bucket: bucket,
+          Region: region,
+          Objects: fileList
+        })
+      }
+    } catch (e) {
+      throw e
     }
 
     try {
-      this.context.debug(`Removing "${Bucket}" bucket from the "${Region}" region.`)
-      await sdk.deleteBucket(params)
-      this.context.debug(`"${Bucket}" bucket was successfully removed from the "${Region}" region.`)
+      this.context.debug(`Removing "${bucket}" bucket from the "${region}" region.`)
+      await sdk.deleteBucket({
+        Bucket: bucket,
+        Region: region
+      })
+      this.context.debug(`"${bucket}" bucket was successfully removed from the "${region}" region.`)
     } catch (e) {
       // if the resource (ie. bucket) was already removed (maybe via the console)
       // just move on and clear the state to keep it in sync
@@ -214,7 +258,88 @@ class TencentCOS extends Component {
     await this.save()
 
     // might be helpful to output the Bucket that was removed
-    return { Bucket, Region }
+    return { bucket, region }
+  }
+
+  async upload(inputs = {}) {
+    this.context.status('Uploading')
+
+    const bucket = this.state.bucket || inputs.bucket
+    const region = this.state.region || inputs.region || 'ap-guangzhou'
+
+    if (!bucket) {
+      throw Error('Unable to upload. Bucket name not found in state.')
+    }
+
+    this.context.debug(`Starting upload to bucket ${bucket} in region ${region}`)
+
+    const clients = getSdk(this.context.credentials.tencent)
+
+    if (inputs.dir && (await utils.dirExists(inputs.dir))) {
+      this.context.debug(`Uploading directory ${inputs.dir} to bucket ${bucket}`)
+      // upload directory contents
+
+      const options = { keyPrefix: inputs.keyPrefix }
+
+      const items = await new Promise((resolve, reject) => {
+        try {
+          resolve(klawSync(inputs.dir))
+        } catch (error) {
+          reject(error)
+        }
+      })
+
+      let handler
+      let key
+      const uploadItems = []
+      items.forEach((item) => {
+        if (item.stats.isDirectory()) {
+          return
+        }
+
+        key = path.relative(inputs.dir, item.path)
+
+        if (options.keyPrefix) {
+          key = path.posix.join(options.keyPrefix, key)
+        }
+
+        // convert backslashes to forward slashes on windows
+        if (path.sep === '\\') {
+          key = key.replace(/\\/g, '/')
+        }
+
+        const itemParams = {
+          Bucket: bucket,
+          Region: region,
+          Key: key,
+          Body: fs.createReadStream(item.path)
+        }
+        handler = util.promisify(clients.putObject.bind(clients))
+        uploadItems.push(handler(itemParams))
+      })
+
+      await Promise.all(uploadItems)
+    } else if (inputs.file && (await utils.fileExists(inputs.file))) {
+      // upload a single file using multipart uploads
+      this.context.debug(`Uploading file ${inputs.file} to bucket ${bucket}`)
+
+      const itemParams = {
+        Bucket: bucket,
+        Region: region,
+        Key: inputs.key || path.basename(inputs.file),
+        Body: fs.createReadStream(inputs.file)
+      }
+      const handler = util.promisify(clients.putObject.bind(clients))
+      try {
+        await handler(itemParams)
+      } catch (e) {
+        throw e
+      }
+
+      this.context.debug(
+        `File ${inputs.file} uploaded with key ${inputs.key || path.basename(inputs.file)}`
+      )
+    }
   }
 }
 
