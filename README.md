@@ -47,7 +47,7 @@ myBucket:
   component: '@serverless/tencent-cos'
   inputs:
     # Required
-    bucket: myBucket-1300418943 # bucket name with AppId suffix
+    bucket: myBucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you
     region: ap-guangzhou
 
     # acl (Optional)
@@ -78,7 +78,7 @@ myBucket:
 
 ### 4. Deploy
 
-```console
+```
 myApp (master)$ serverless --debug
 
   DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
@@ -111,7 +111,7 @@ myApp (master)$
 
 ### 5. Remove
 
-```console
+```
 myApp (master)$ serverless remove --debug
 
   DEBUG ─ Flushing template state and removing all components.

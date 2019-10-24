@@ -51,7 +51,7 @@ myBucket:
   component: '@serverless/tencent-cos' # 添加依赖的cos组件
   inputs:
     # 必填
-    bucket: myBucket-1300418943 # 存储桶后缀需要填写APPID信息
+    bucket: myBucket-1300418942 # 存储桶后缀需要填写APPID信息
     region: ap-guangzhou # 需要部署存储桶的地域信息
 
     # acl配置 (可选)
@@ -84,7 +84,7 @@ myBucket:
 
 通过如下命令进行部署，并查看部署过程中的信息
 
-```console
+```
 myApp (master)$ serverless --debug
 
   DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
@@ -119,7 +119,7 @@ myApp (master)$
 
 通过以下命令移除部署的存储桶
 
-```console
+```
 myApp (master)$ serverless remove --debug
 
   DEBUG ─ Flushing template state and removing all components.
