@@ -30,7 +30,7 @@ const getSdk = ({ SecretId, SecretKey }) => {
 // if the Bucket or Region inputs changed
 const shouldReplace = (inputs, state) => {
   const stateNotEmpty = Object.keys(state).length !== 0
-  const bucketOrRegionChanged = inputs.Bucket !== state.Bucket || inputs.Region !== state.Region
+  const bucketOrRegionChanged = inputs.bucket !== state.bucket || inputs.region !== state.region
   if (stateNotEmpty && bucketOrRegionChanged) {
     return true
   }
@@ -38,35 +38,52 @@ const shouldReplace = (inputs, state) => {
 }
 
 const deployBucket = async (sdk, inputs, state) => {
-  const { Bucket, Region } = inputs
+  const { bucket, region } = inputs
 
   try {
     await sdk.putBucket({
-      Bucket,
-      Region
+      Bucket: bucket,
+      Region: region
     })
   } catch (e) {
     // if this is a redeploy of a previously deployed bucket
     // just move on. Otherwise throw an error
-    if (e.error.Code !== 'BucketAlreadyExists' || inputs.Bucket !== state.Bucket) {
+    if (e.error.Code !== 'BucketAlreadyExists' || inputs.bucket !== state.bucket) {
       throw e
     }
   }
 }
 
+const getCorsRules = (cors) => {
+  return cors.map((corsRule) => ({
+    ID: corsRule.id,
+    MaxAgeSeconds: String(corsRule.maxAgeSeconds),
+    AllowedMethods: corsRule.allowedMethods,
+    AllowedOrigins: corsRule.allowedOrigins,
+    AllowedHeaders: corsRule.allowedHeaders,
+    ExposeHeaders: corsRule.exposeHeaders
+  }))
+}
+
+const getTags = (tags) =>
+  tags.map((tagObject) => ({
+    Key: tagObject.key,
+    Value: tagObject.value
+  }))
+
 // Create a new component by extending the Component Class
 class TencentCOS extends Component {
   async default(inputs = {}) {
-    // Since this is a low level component, I think it's best to surface
-    // all service API inputs as is to avoid confusion and enable all features of the service
-    const { Bucket, Region, ACL, CORS, Tags } = inputs
+    if (!inputs.bucket.includes(this.context.credentials.tencent.AppId)) {
+      inputs.bucket = `${inputs.bucket}-${this.context.credentials.tencent.AppId}`
+    }
 
     const sdk = getSdk(this.context.credentials.tencent)
 
     // check if replace is required
     if (shouldReplace(inputs, this.state)) {
       // it's helpful to provide debug statements for every step of the deployment
-      this.context.debug(`"Bucket" or "Region" inputs changed. Replacing.`)
+      this.context.debug(`"bucket" or "region" inputs changed. Replacing.`)
 
       // the first step of replacing is to remove
       // the old bucket using data in the state
@@ -75,61 +92,69 @@ class TencentCOS extends Component {
     }
 
     // Deploy the bucket
-    this.context.debug(`Deploying "${Bucket}" bucket in the "${Region}" region.`)
+    this.context.debug(`Deploying "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
     await deployBucket(sdk, inputs, this.state)
-    this.context.debug(`"${Bucket}" bucket was successfully deployed to the "${Region}" region.`)
+    this.context.debug(
+      `"${inputs.bucket}" bucket was successfully deployed to the "${inputs.region}" region.`
+    )
 
     // set bucket ACL config
-    this.context.debug(`Setting ACL for "${Bucket}" bucket in the "${Region}" region.`)
+    this.context.debug(
+      `Setting ACL for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
+    )
 
     const params = {
-      Bucket: inputs.Bucket,
-      Region: inputs.Region,
-      ACL: ACL ? inputs.ACL.Permissions : undefined,
-      GrantRead: ACL ? inputs.ACL.GrantRead : undefined,
-      GrantWrite: ACL ? inputs.ACL.GrantWrite : undefined,
-      GrantFullControl: ACL ? inputs.ACL.GrantFullControl : undefined
+      Bucket: inputs.bucket,
+      Region: inputs.region,
+      ACL: inputs.acl ? inputs.acl.permissions : undefined,
+      GrantRead: inputs.acl ? inputs.acl.grantRead : undefined,
+      GrantWrite: inputs.acl ? inputs.acl.grantWrite : undefined,
+      GrantFullControl: inputs.acl ? inputs.acl.grantFullControl : undefined
     }
 
     await sdk.putBucketAcl(params)
 
     // If user set Cors Rules, update the bucket with those
-    if (CORS) {
-      this.context.debug(`Setting CORS rules for "${Bucket}" bucket in the "${Region}" region.`)
+    if (inputs.cors) {
+      this.context.debug(
+        `Setting CORS rules for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
+      )
 
-      const putBucketCorsParams2 = {
-        Bucket,
-        Region,
-        CORSRules: CORS
+      const putBucketCorsParams = {
+        Bucket: inputs.bucket,
+        Region: inputs.region,
+        CORSRules: getCorsRules(inputs.cors)
       }
 
-      await sdk.putBucketCors(putBucketCorsParams2)
+      await sdk.putBucketCors(putBucketCorsParams)
     } else {
       // otherwise, make sure the bucket doesn't have
       // any Cors rules to reflect what is defined in the config
       this.context.debug(
-        `Ensuring no CORS are set for "${Bucket}" bucket in the "${Region}" region.`
+        `Ensuring no CORS are set for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
       )
-      const deleteBucketCorsParams = { Bucket, Region }
+      const deleteBucketCorsParams = { Bucket: inputs.bucket, Region: inputs.region }
       await sdk.deleteBucketCors(deleteBucketCorsParams)
     }
 
     // If the user set Tags, update the bucket with those
-    if (Tags) {
-      this.context.debug(`Setting Tags for "${Bucket}" bucket in the "${Region}" region.`)
+    if (inputs.tags) {
+      this.context.debug(
+        `Setting Tags for "${inputs.bucket}" bucket in the "${inputs.regionn}" region.`
+      )
       const putBucketTaggingParams = {
-        Bucket,
-        Region,
-        Tags
+        Bucket: inputs.bucket,
+        Region: inputs.region,
+        Tags: getTags(inputs.tags)
       }
       await sdk.putBucketTagging(putBucketTaggingParams)
     } else {
       // otherwise, make sure the bucket doesn't have
       // any Tags to reflect what is defined in the config
       this.context.debug(
-        `Ensuring no Tags are set for "${Bucket}" bucket in the "${Region}" region.`
+        `Ensuring no Tags are set for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
       )
-      const deleteBucketTaggingParams = { Bucket, Region }
+      const deleteBucketTaggingParams = { Bucket: inputs.bucket, Region: inputs.region }
       await sdk.deleteBucketTagging(deleteBucketTaggingParams)
     }
 
@@ -139,8 +164,8 @@ class TencentCOS extends Component {
     // is the source of truth about components/servcies state
     // But in this case, we wanna know what is the bucket the user
     // deployed so that we could safely remove it even if inputs changed
-    this.state.Bucket = Bucket
-    this.state.Region = Region
+    this.state.bucket = inputs.bucket
+    this.state.region = inputs.region
     await this.save()
 
     // return the outputs of the deployments
@@ -151,12 +176,16 @@ class TencentCOS extends Component {
   async remove(inputs = {}) {
     // for removal, we use state data since the user could change or delete the inputs
     // if no data found in state, we try to remove whatever is in the inputs
-    const Bucket = this.state.Bucket || inputs.Bucket
-    const Region = this.state.Region || inputs.Region
+    let Bucket = this.state.bucket || inputs.bucket
+    const Region = this.state.region || inputs.region
 
     // nothing to be done if there's nothing to remove
     if (!Bucket || !Region) {
       return {}
+    }
+
+    if (!Bucket.includes(this.context.credentials.tencent.AppId)) {
+      Bucket = `${Bucket}-${this.context.credentials.tencent.AppId}`
     }
 
     const sdk = getSdk(this.context.credentials.tencent)

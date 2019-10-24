@@ -47,35 +47,33 @@ myBucket:
   component: '@serverless/tencent-cos'
   inputs:
     # Required
-    Bucket: myBucket-1300418943 # bucket name with AppId suffix
-    Region: ap-guangzhou
+    bucket: myBucket-1300418943 # bucket name with AppId suffix
+    region: ap-guangzhou
 
-    # ACL (Optional)
-    ACL:
-      Permissions: private
-      GrantRead: STRING_VALUE
-      GrantWrite: STRING_VALUE
-      GrantFullControl: STRING_VALUE
+    # acl (Optional)
+    acl:
+      permissions: private
+      grantRead: STRING_VALUE
+      grantWrite: STRING_VALUE
+      grantFullControl: STRING_VALUE
 
-    # CORS (Optional)
-    CORS:
-      - ID: abc
-        MaxAgeSeconds: '10'
-        AllowedMethods:
+    # cors (Optional)
+    cors:
+      - id: abc
+        maxAgeSeconds: '10'
+        allowedMethods:
           - GET
-        AllowedOrigins:
+        allowedOrigins:
           - https://tencent.com
-        AllowedHeaders:
+        allowedHeaders:
           - FIRST_ALLOWED_HEADER
-        ExposeHeaders:
+        exposeHeaders:
           - FIRST_EXPOSED_HEADER
 
-    # Tags (Optional)
-    Tags:
-      - Key: abc
-        Value: xyz
-      - Key: abc
-        Value: xyz
+    # tags (Optional)
+    tags:
+      - key: abc
+        value: xyz
 ```
 
 ### 4. Deploy
