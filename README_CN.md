@@ -28,7 +28,7 @@ $ npm install -g serverless
 
 ```console
 $ touch serverless.yml
-$ touch .env # your Tencent API Keys
+$ touch .env # 腾讯云的配置信息
 ```
 
 在 `.env` 文件中配置腾讯云的APPID，SecretId和SecretKey信息并保存
@@ -50,7 +50,7 @@ TENCENT_APP_ID=123
 myBucket:
   component: '@serverless/tencent-cos'  # 添加依赖的cos组件
   inputs:
-    # Required
+    # 必填
     Bucket: myBucket-1300418943  # 存储桶后缀需要填写APPID信息
     Region: ap-guangzhou   # 需要部署存储桶的地域信息
 
