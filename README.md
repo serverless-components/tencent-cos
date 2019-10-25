@@ -47,7 +47,7 @@ myBucket:
   component: '@serverless/tencent-cos'
   inputs:
     # Required
-    bucket: myBucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you
+    bucket: myBucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you, capital letters are not allowed
     region: ap-guangzhou
 
     # acl (Optional)

@@ -213,13 +213,16 @@ class TencentCOS extends Component {
     const sdk = getSdk(this.context.credentials.tencent)
 
     try {
+      // if cos is not empty, must clean it first
       this.context.debug(`Removing files from the "${bucket}" bucket.`)
+      // get file list
       const fileListResult = await sdk.getBucket({
         Bucket: bucket,
         Region: region
       })
       const fileList = new Array()
       if (fileListResult && fileListResult.Contents && fileListResult.Contents.length > 0) {
+        // delete files
         for (let i = 0; i < fileListResult.Contents.length; i++) {
           fileList.push({
             Key: fileListResult.Contents[i].Key
@@ -245,8 +248,7 @@ class TencentCOS extends Component {
     } catch (e) {
       // if the resource (ie. bucket) was already removed (maybe via the console)
       // just move on and clear the state to keep it in sync
-      if (e.code !== 'NotFound') {
-        // todo is that the correct error code?!
+      if (e.code !== 'NoSuchBucket') {
         throw e
       }
     }
@@ -261,6 +263,10 @@ class TencentCOS extends Component {
   }
 
   async upload(inputs = {}) {
+    /*
+      update file or dir
+     */
+
     this.context.status('Uploading')
 
     const bucket = this.state.bucket || inputs.bucket
