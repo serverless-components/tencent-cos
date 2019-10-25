@@ -3,7 +3,6 @@ const util = require('util')
 const klawSync = require('klaw-sync')
 const path = require('path')
 const fs = require('fs')
-const mime = require('mime-types')
 const COS = require('cos-nodejs-sdk-v5')
 const { utils } = require('@serverless/core')
 
