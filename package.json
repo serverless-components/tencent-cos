@@ -1,7 +1,7 @@
 {
   "name": "@serverless/tencent-cos",
   "description": "Tencent Cloud Object Storage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"
@@ -26,4 +26,3 @@
     "prettier": "^1.18.2"
   }
 }
-
