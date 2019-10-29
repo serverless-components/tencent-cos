@@ -51,7 +51,7 @@ myBucket:
   component: '@serverless/tencent-cos'
   inputs:
     # Required
-    bucket: myBucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you, capital letters are not allowed
+    bucket: mybucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you, capital letters are not allowed
     region: ap-guangzhou
 
     # acl (Optional)
@@ -86,9 +86,9 @@ myBucket:
 myApp (master)$ serverless --debug
 
   DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
-  DEBUG ─ Setting ACL for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting CORS rules for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting Tags for "myBucket-1300418942" bucket in the "undefined" region.
+  DEBUG ─ Setting ACL for "mybucket-1300418942" bucket in the "eu-frankfurt" region.
+  DEBUG ─ Setting CORS rules for "mybucket-1300418942" bucket in the "eu-frankfurt" region.
+  DEBUG ─ Setting Tags for "mybucket-1300418942" bucket in the "undefined" region.
 
   bucket:
     bucket: myBucket-1300418942
