@@ -37,11 +37,6 @@ TENCENT_SECRET_KEY=123
 TENCENT_APP_ID=125xxxx
 ```
 * If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first.
-Set Tencent credentials in the `.env` file.
-
-If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first.  
-
-If you already login in, find  `TENCENT_SECRET_ID` and `TENCENT_SECRET_KEY`  in [Tencent Console](https://console.cloud.tencent.com/cam/capi).
 
 ### 3. Configure
 
