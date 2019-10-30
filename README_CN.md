@@ -62,9 +62,9 @@ myBucket:
     # acl配置 (可选)
     acl:
       permissions: private
-      grantRead: STRING_VALUE
-      grantWrite: STRING_VALUE
-      grantFullControl: STRING_VALUE
+      grantRead: id="1234567" # 添加主账号或者子账户uin来增加对应权限
+      grantWrite: id="1234567"
+      grantFullControl: id="1234567"
 
     # cors配置 (可选)
     cors:
