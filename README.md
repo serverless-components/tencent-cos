@@ -53,9 +53,9 @@ myBucket:
     # acl (Optional)
     acl:
       permissions: private
-      grantRead: STRING_VALUE
-      grantWrite: STRING_VALUE
-      grantFullControl: STRING_VALUE
+      grantRead: id="1234567" # add root/sub account id to get ACL policy
+      grantWrite: id="1234567"
+      grantFullControl: id="1234567"
 
     # cors (Optional)
     cors:
