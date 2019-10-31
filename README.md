@@ -46,81 +46,48 @@ TENCENT_APP_ID=125xxxx
 myBucket:
   component: '@serverless/tencent-cos'
   inputs:
-    # Required
-    bucket: mybucket-1300418942 # if you don't add the AppId suffix, it will be added automatically for you, capital letters are not allowed
+    bucket: my-bucket
     region: ap-guangzhou
-
-    # acl (Optional)
-    acl:
-      permissions: private
-      grantRead: id="1234567" # add root/sub account id to get ACL policy
-      grantWrite: id="1234567"
-      grantFullControl: id="1234567"
-
-    # cors (Optional)
-    cors:
-      - id: abc
-        maxAgeSeconds: '10'
-        allowedMethods:
-          - GET
-        allowedOrigins:
-          - https://tencent.com
-        allowedHeaders:
-          - FIRST_ALLOWED_HEADER
-        exposeHeaders:
-          - FIRST_EXPOSED_HEADER
-
-    # tags (Optional)
-    tags:
-      - key: abc
-        value: xyz
 ```
+* [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
+
 
 ### 4. Deploy
 
 ```
-myApp (master)$ serverless --debug
+$ sls --debug
 
-  DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
-  DEBUG ─ Setting ACL for "mybucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting CORS rules for "mybucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting Tags for "mybucket-1300418942" bucket in the "undefined" region.
+  DEBUG ─ Resolving the template's static variables.
+  DEBUG ─ Collecting components from the template.
+  DEBUG ─ Downloading any NPM components found in the template.
+  DEBUG ─ Analyzing the template's components dependencies.
+  DEBUG ─ Creating the template's components graph.
+  DEBUG ─ Syncing template state.
+  DEBUG ─ Executing the template's components graph.
+  DEBUG ─ Deploying "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ "my-bucket-1300415943" bucket was successfully deployed to the "ap-guangzhou" region.
+  DEBUG ─ Setting ACL for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ Ensuring no CORS are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ Ensuring no Tags are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
 
-  bucket:
-    bucket: myBucket-1300418942
-    region: eu-frankfurt
-    acl:
-      permissions: private
-    cors:
-      -
-        id:             abc
-        maxAgeSeconds:  10
-        allowedMethods: (max depth reached)
-        allowedOrigins: (max depth reached)
-        allowedHeaders: (max depth reached)
-        exposeHeaders:  (max depth reached)
-    tags:
-      -
-        key:   abc
-        value: xyz
+  myBucket: 
+    bucket: my-bucket-1300415943
+    region: ap-guangzhou
 
-  3s › bucket › done
-
-myApp (master)$
+  10s › myBucket › done
 ```
 
 ### 5. Remove
 
 ```
-myApp (master)$ serverless remove --debug
+$ sls remove --debug
 
   DEBUG ─ Flushing template state and removing all components.
-  DEBUG ─ Removing "myBucket-1300418942" bucket from the "eu-frankfurt" region.
-  DEBUG ─ "myBucket-1300418942" bucket was successfully removed from the "eu-frankfurt" region.
+  DEBUG ─ Removing files from the "my-bucket-1300415943" bucket.
+  DEBUG ─ Removing "my-bucket-1300415943" bucket from the "ap-guangzhou" region.
+  DEBUG ─ "my-bucket-1300415943" bucket was successfully removed from the "ap-guangzhou" region.
 
-  7s › bucket › done
-
-myApp (master)$
+  2s › myBucket › done
 ```
 
 ### New to Components?

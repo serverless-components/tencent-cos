@@ -53,71 +53,40 @@ TENCENT_APP_ID=123
 # serverless.yml
 
 myBucket:
-  component: '@serverless/tencent-cos' # 添加依赖的cos组件
+  component: '@serverless/tencent-cos'
   inputs:
-    # 必填
-    bucket: myBucket-1300418942 # 存储桶后缀需要填写APPID信息，如果不填会默认帮忙添加后缀
-    region: ap-guangzhou # 需要部署存储桶的地域信息
+    bucket: my-bucket
+    region: ap-guangzhou
 
-    # acl配置 (可选)
-    acl:
-      permissions: private
-      grantRead: id="1234567" # 添加主账号或者子账户uin来增加对应权限
-      grantWrite: id="1234567"
-      grantFullControl: id="1234567"
-
-    # cors配置 (可选)
-    cors:
-      - id: abc
-        maxAgeSeconds: '10'
-        allowedMethods:
-          - GET
-        allowedOrigins:
-          - https://tencent.com
-        allowedHeaders:
-          - FIRST_ALLOWED_HEADER
-        exposeHeaders:
-          - FIRST_EXPOSED_HEADER
-
-    # tags标签配置 (可选)
-    tags:
-      - key: abc
-        value: xyz
 ```
+* [点击此处查看配置文档](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
+
 
 ### 4. 部署
 
 通过如下命令进行部署，并查看部署过程中的信息
 
 ```
-myApp (master)$ serverless --debug
+$ sls --debug
 
-  DEBUG ─ "myBucket-1300418942" bucket was successfully deployed to the "eu-frankfurt" region.
-  DEBUG ─ Setting ACL for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting CORS rules for "myBucket-1300418942" bucket in the "eu-frankfurt" region.
-  DEBUG ─ Setting Tags for "myBucket-1300418942" bucket in the "undefined" region.
+  DEBUG ─ Resolving the template's static variables.
+  DEBUG ─ Collecting components from the template.
+  DEBUG ─ Downloading any NPM components found in the template.
+  DEBUG ─ Analyzing the template's components dependencies.
+  DEBUG ─ Creating the template's components graph.
+  DEBUG ─ Syncing template state.
+  DEBUG ─ Executing the template's components graph.
+  DEBUG ─ Deploying "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ "my-bucket-1300415943" bucket was successfully deployed to the "ap-guangzhou" region.
+  DEBUG ─ Setting ACL for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ Ensuring no CORS are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
+  DEBUG ─ Ensuring no Tags are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
 
-  bucket:
-    bucket: myBucket-1300418942
-    region: eu-frankfurt
-    acl:
-      permissions: private
-    cors:
-      -
-        id:             abc
-        maxAgeSeconds:  10
-        allowedMethods: (max depth reached)
-        allowedOrigins: (max depth reached)
-        allowedHeaders: (max depth reached)
-        exposeHeaders:  (max depth reached)
-    tags:
-      -
-        key:   abc
-        value: xyz
+  myBucket: 
+    bucket: my-bucket-1300415943
+    region: ap-guangzhou
 
-  3s › bucket › done
-
-myApp (master)$
+  10s › myBucket › done
 ```
 
 ### 5. 移除
@@ -125,15 +94,14 @@ myApp (master)$
 通过以下命令移除部署的存储桶
 
 ```
-myApp (master)$ serverless remove --debug
+$ sls remove --debug
 
   DEBUG ─ Flushing template state and removing all components.
-  DEBUG ─ Removing "myBucket-1300418942" bucket from the "eu-frankfurt" region.
-  DEBUG ─ "myBucket-1300418942" bucket was successfully removed from the "eu-frankfurt" region.
+  DEBUG ─ Removing files from the "my-bucket-1300415943" bucket.
+  DEBUG ─ Removing "my-bucket-1300415943" bucket from the "ap-guangzhou" region.
+  DEBUG ─ "my-bucket-1300415943" bucket was successfully removed from the "ap-guangzhou" region.
 
-  7s › bucket › done
-
-myApp (master)$
+  2s › myBucket › done
 ```
 
 ### 还支持哪些组件？
