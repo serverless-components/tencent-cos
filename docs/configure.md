@@ -49,9 +49,9 @@ Main param description
 | Param        | Required/Optional  |  Description |
 | --------     | :-----:         |  :----      |
 | permissions      | Optional    | This defines the access control list (ACL) attribute of the bucket. For the enumerated values such as private and public-read, see the Preset ACL for Buckets section in ACL Overview. Default value: private |
-| grantRead   | Optional       | This grants the grantee permission to read the bucket in the format of id="\[OwnerUin]", such as id="100000000001". Multiple grantees can be separated by comma (,), such as id="100000000001",id="100000000002" |
-| grantWrite  | Optional          |This grants the grantee permission to write to the bucket in the format of id="\[OwnerUin]", such as id="100000000001". Multiple grantees can be separated by comma (,), such as id="100000000001",id="100000000002" |
-| grantFullControl    | Optional        | This grants the grantee full permission to manipulate the bucket in the format of id="\[OwnerUin]", such as id="100000000001". Multiple grantees can be separated by comma (,), such as id="100000000001",id="100000000002" |
+| grantRead   | Optional       | This grants the grantee permission to read the bucket in the format of id="\[OwnerUin]", such as id="100000000001". |
+| grantWrite  | Optional          |This grants the grantee permission to write to the bucket in the format of id="\[OwnerUin]", such as id="100000000001".  |
+| grantFullControl    | Optional        | This grants the grantee full permission to manipulate the bucket in the format of id="\[OwnerUin]", such as id="100000000001".  |
 
 
 ### cors param description
