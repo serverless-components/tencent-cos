@@ -5,6 +5,11 @@ const path = require('path')
 const fs = require('fs')
 const COS = require('cos-nodejs-sdk-v5')
 const { utils } = require('@serverless/core')
+const tencentcloud = require('tencentcloud-sdk-nodejs')
+const ClientProfile = require('tencentcloud-sdk-nodejs/tencentcloud/common/profile/client_profile.js')
+const HttpProfile = require('tencentcloud-sdk-nodejs/tencentcloud/common/profile/http_profile.js')
+const AbstractModel = require('tencentcloud-sdk-nodejs/tencentcloud/common/abstract_model')
+const AbstractClient = require('tencentcloud-sdk-nodejs/tencentcloud/common/abstract_client')
 
 // because the Tencent SDK does not yet support promises
 // I've created a helpful method that returns a promised client
@@ -80,6 +85,33 @@ const getTags = (tags) =>
     Value: tagObject.value
   }))
 
+class GetUserAppIdResponse extends AbstractModel {
+  constructor() {
+    super()
+
+    this.RequestId = null
+  }
+
+  deserialize(params) {
+    if (!params) {
+      return
+    }
+    this.AppId = 'RequestId' in params ? params.AppId : null
+    this.RequestId = 'RequestId' in params ? params.RequestId : null
+  }
+}
+
+class AppidClient extends AbstractClient {
+  constructor(credential, region, profile) {
+    super('cam.tencentcloudapi.com', '2019-01-16', credential, region, profile)
+  }
+
+  GetUserAppId(req, cb) {
+    const resp = new GetUserAppIdResponse()
+    this.request('GetUserAppId', req, resp, cb)
+  }
+}
+
 // Create a new component by extending the Component Class
 class TencentCOS extends Component {
   confirmEnding(sourceStr, targetStr) {
@@ -91,9 +123,31 @@ class TencentCOS extends Component {
     return false
   }
 
+  getAppid(credentials) {
+    const secret_id = credentials.SecretId
+    const secret_key = credentials.SecretKey
+    const cred = new tencentcloud.common.Credential(secret_id, secret_key)
+    const httpProfile = new HttpProfile()
+    httpProfile.reqTimeout = 30
+    const clientProfile = new ClientProfile('HmacSHA256', httpProfile)
+    const cam = new AppidClient(cred, 'ap-guangzhou', clientProfile)
+    const req = new GetUserAppIdResponse()
+    const body = {}
+    req.from_json_string(JSON.stringify(body))
+    const handler = util.promisify(cam.GetUserAppId.bind(cam))
+    try {
+      return handler(req)
+    } catch (e) {
+      throw e
+    }
+  }
+
   async default(inputs = {}) {
     // Since this is a low level component, I think it's best to surface
     // all service API inputs as is to avoid confusion and enable all features of the service
+    const appId = await this.getAppid(this.context.credentials.tencent)
+    this.context.credentials.tencent.AppId = appId.AppId
+
     inputs.bucket = this.confirmEnding(inputs.bucket, this.context.credentials.tencent.AppId)
       ? inputs.bucket
       : inputs.bucket + '-' + this.context.credentials.tencent.AppId
@@ -198,6 +252,8 @@ class TencentCOS extends Component {
   async remove(inputs = {}) {
     // for removal, we use state data since the user could change or delete the inputs
     // if no data found in state, we try to remove whatever is in the inputs
+    const appId = await this.getAppid(this.context.credentials.tencent)
+    this.context.credentials.tencent.AppId = appId.AppId
     let bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region
 
@@ -264,13 +320,15 @@ class TencentCOS extends Component {
 
   async upload(inputs = {}) {
     /*
-      update file or dir
-     */
+			update file or dir
+		 */
 
     this.context.status('Uploading')
 
     const bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region || 'ap-guangzhou'
+    const appId = await this.getAppid(this.context.credentials.tencent)
+    this.context.credentials.tencent.AppId = appId.AppId
 
     if (!bucket) {
       throw Error('Unable to upload. Bucket name not found in state.')
