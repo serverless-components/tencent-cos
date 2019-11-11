@@ -115,6 +115,7 @@ class AppidClient extends AbstractClient {
 // Create a new component by extending the Component Class
 class TencentCOS extends Component {
   confirmEnding(sourceStr, targetStr) {
+    targetStr = targetStr.toString()
     const start = sourceStr.length - targetStr.length
     const arr = sourceStr.substr(start, targetStr.length)
     if (arr == targetStr) {
