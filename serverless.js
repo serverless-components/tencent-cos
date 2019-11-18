@@ -1,4 +1,5 @@
 const { Component } = require('@serverless/core')
+const TencentLogin = require('tencent-login')
 const util = require('util')
 const klawSync = require('klaw-sync')
 const path = require('path')
@@ -14,7 +15,7 @@ const AbstractClient = require('tencentcloud-sdk-nodejs/tencentcloud/common/abst
 // because the Tencent SDK does not yet support promises
 // I've created a helpful method that returns a promised client
 // for the methods needed for this component
-const getSdk = ({ SecretId, SecretKey }) => {
+const getSdk = ({ SecretId, SecretKey, token, timestamp }) => {
   // console.log(credentials)
   const methods = [
     'putBucket',
@@ -28,7 +29,26 @@ const getSdk = ({ SecretId, SecretKey }) => {
     'deleteMultipleObject'
   ]
 
-  var cos = new COS({ SecretId, SecretKey, UserAgent: 'ServerlessComponent' })
+  let cos
+  if (token) {
+    cos = new COS({
+      SecretId,
+      SecretKey,
+      UserAgent: 'ServerlessComponent'
+    })
+  } else {
+    cos = new COS({
+      getAuthorization: function(option, callback) {
+        callback({
+          TmpSecretId: SecretId,
+          TmpSecretKey: SecretKey,
+          UserAgent: 'ServerlessComponent',
+          XCosSecurityToken: token,
+          ExpiredTime: timestamp
+        })
+      }
+    })
+  }
 
   return methods.reduce((accum, method) => {
     accum[method] = util.promisify(cos[method])
@@ -127,7 +147,9 @@ class TencentCOS extends Component {
   getAppid(credentials) {
     const secret_id = credentials.SecretId
     const secret_key = credentials.SecretKey
-    const cred = new tencentcloud.common.Credential(secret_id, secret_key)
+    const cred = credentials.token
+      ? new tencentcloud.common.Credential(secret_id, secret_key, credentials.token)
+      : new tencentcloud.common.Credential(secret_id, secret_key)
     const httpProfile = new HttpProfile()
     httpProfile.reqTimeout = 30
     const clientProfile = new ClientProfile('HmacSHA256', httpProfile)
@@ -143,9 +165,65 @@ class TencentCOS extends Component {
     }
   }
 
+  async doLogin() {
+    const login = new TencentLogin()
+    const tencent_credentials = await login.login()
+    if (tencent_credentials) {
+      tencent_credentials.timestamp = Date.now() / 1000
+      const tencent_credentials_json = JSON.stringify(tencent_credentials)
+      try {
+        const tencent = {
+          SecretId: tencent_credentials.tencent_secret_id,
+          SecretKey: tencent_credentials.tencent_secret_key,
+          AppId: tencent_credentials.tencent_appid,
+          token: tencent_credentials.tencent_token,
+          timestamp: tencent_credentials.timestamp
+        }
+        await fs.writeFileSync('./.env_temp', tencent_credentials_json)
+        this.context.debug(
+          'The temporary key is saved successfully, and the validity period is two hours.'
+        )
+        return tencent
+      } catch (e) {
+        throw 'Error getting temporary key: ' + e
+      }
+    }
+  }
+
+  async getTempKey() {
+    const that = this
+    try {
+      const data = await fs.readFileSync('./.env_temp', 'utf8')
+      try {
+        const tencent = {}
+        const tencent_credentials_read = JSON.parse(data)
+        if (Date.now() / 1000 - tencent_credentials_read.timestamp <= 7000) {
+          tencent.SecretId = tencent_credentials_read.tencent_secret_id
+          tencent.SecretKey = tencent_credentials_read.tencent_secret_key
+          tencent.AppId = tencent_credentials_read.tencent_appid
+          tencent.token = tencent_credentials_read.tencent_token
+          tencent.timestamp = tencent_credentials_read.timestamp
+          return tencent
+        }
+        return await that.doLogin()
+      } catch (e) {
+        return await that.doLogin()
+      }
+    } catch (e) {
+      return await that.doLogin()
+    }
+  }
+
   async default(inputs = {}) {
     // Since this is a low level component, I think it's best to surface
     // all service API inputs as is to avoid confusion and enable all features of the service
+
+    let { tencent } = this.context.credentials
+    if (!tencent) {
+      tencent = await this.getTempKey(tencent)
+      this.context.credentials.tencent = tencent
+    }
+
     const appId = await this.getAppid(this.context.credentials.tencent)
     this.context.credentials.tencent.AppId = appId.AppId
 
@@ -253,6 +331,11 @@ class TencentCOS extends Component {
   async remove(inputs = {}) {
     // for removal, we use state data since the user could change or delete the inputs
     // if no data found in state, we try to remove whatever is in the inputs
+    let { tencent } = this.context.credentials
+    if (!tencent) {
+      tencent = await this.getTempKey(tencent)
+      this.context.credentials.tencent = tencent
+    }
     const appId = await this.getAppid(this.context.credentials.tencent)
     this.context.credentials.tencent.AppId = appId.AppId
     let bucket = this.state.bucket || inputs.bucket
@@ -325,7 +408,11 @@ class TencentCOS extends Component {
 		 */
 
     this.context.status('Uploading')
-
+    let { tencent } = this.context.credentials
+    if (!tencent) {
+      tencent = await this.getTempKey(tencent)
+      this.context.credentials.tencent = tencent
+    }
     const bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region || 'ap-guangzhou'
     const appId = await this.getAppid(this.context.credentials.tencent)
