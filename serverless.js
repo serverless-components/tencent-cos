@@ -223,9 +223,12 @@ class TencentCOS extends Component {
       tencent = await this.getTempKey(tencent)
       this.context.credentials.tencent = tencent
     }
+    if (!this.context.credentials.tencent.AppId) {
+      const appId = await this.getAppid(this.context.credentials.tencent)
+      this.context.credentials.tencent.AppId = appId.AppId
+    }
 
-    const appId = await this.getAppid(this.context.credentials.tencent)
-    this.context.credentials.tencent.AppId = appId.AppId
+
 
     inputs.bucket = this.confirmEnding(inputs.bucket, this.context.credentials.tencent.AppId)
       ? inputs.bucket
