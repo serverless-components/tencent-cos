@@ -30,7 +30,7 @@ const getSdk = ({ SecretId, SecretKey, token, timestamp }) => {
   ]
 
   let cos
-  if (token) {
+  if (!token) {
     cos = new COS({
       SecretId,
       SecretKey,
