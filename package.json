@@ -21,7 +21,7 @@
     "fs-extra": "^7.0.0",
     "klaw-sync": "^6.0.0",
     "mime-types": "^2.1.22",
-    "tencent-login": "^0.1.0"
+    "tencent-login": "^0.1.2"
   },
   "devDependencies": {
     "babel-eslint": "9.0.0",
