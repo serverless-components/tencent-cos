@@ -68,6 +68,22 @@ const shouldReplace = (inputs, state) => {
   return false
 }
 
+const getBucket = async (sdk, inputs) => {
+  const { bucket, region } = inputs
+
+  try {
+    const res = await sdk.getBucket({
+      Bucket: bucket,
+      Region: region
+    })
+    return res
+  } catch (e) {
+    if (!(e.error.Code == 'NoSuchBucket')) {
+      throw e
+    }
+  }
+}
+
 const deployBucket = async (sdk, inputs, state) => {
   const { bucket, region } = inputs
 
@@ -289,12 +305,20 @@ class TencentCOS extends Component {
       // then we move on to create the new bucket
     }
 
-    // Deploy the bucket
-    this.context.debug(`Deploying "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
-    await deployBucket(sdk, inputs, this.state)
-    this.context.debug(
-      `"${inputs.bucket}" bucket was successfully deployed to the "${inputs.region}" region.`
-    )
+    // check bucket exist or not
+    const res = await getBucket(sdk, inputs)
+    if (!res) {
+      // Deploy the bucket
+      this.context.debug(`Deploying "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
+      await deployBucket(sdk, inputs, this.state)
+      this.context.debug(
+        `"${inputs.bucket}" bucket was successfully deployed to the "${inputs.region}" region.`
+      )
+    } else {
+      this.context.debug(
+        `Bucket "${inputs.bucket}" in the "${inputs.region}" region already exist.`
+      )
+    }
 
     // set bucket ACL config
     this.context.debug(
