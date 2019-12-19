@@ -15,7 +15,7 @@
 
 ### 1. 安装
 
-通过 npm 安装 serverless 
+通过 npm 安装 serverless
 
 ```console
 $ npm install -g serverless
@@ -37,10 +37,9 @@ myBucket:
   inputs:
     bucket: my-bucket
     region: ap-guangzhou
-
 ```
-* [点击此处查看配置文档](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
 
+- [点击此处查看配置文档](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
 
 ### 3. 部署
 
@@ -64,7 +63,7 @@ $ sls --debug
   DEBUG ─ Ensuring no CORS are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
   DEBUG ─ Ensuring no Tags are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
 
-  myBucket: 
+  myBucket:
     bucket: my-bucket-1300415943
     region: ap-guangzhou
 
@@ -72,6 +71,8 @@ $ sls --debug
 ```
 
 ### 4. 移除
+
+**注意：**删除服务将导致用过的存储桶也被清空和删除。此操作无法撤消。
 
 通过以下命令移除部署的存储桶
 
@@ -86,24 +87,27 @@ $ sls remove --debug
   2s › myBucket › done
 ```
 
-####  账号配置（可选）
+#### 账号配置（可选）
 
-当前默认支持CLI扫描二维码登录，如您希望配置持久的环境变量/秘钥信息，也可以本地创建 `.env` 文件
+当前默认支持 CLI 扫描二维码登录，如您希望配置持久的环境变量/秘钥信息，也可以本地创建 `.env` 文件
 
 ```console
 $ touch .env # 腾讯云的配置信息
 ```
 
 在 `.env` 文件中配置腾讯云的 SecretId 和 SecretKey 信息并保存。
+
 ```
 # .env
 TENCENT_SECRET_ID=123
 TENCENT_SECRET_KEY=123
 ```
->?
+
+> ?
+>
 > - 如果没有腾讯云账号，请先 [注册新账号](https://cloud.tencent.com/register)。
-> - 如果已有腾讯云账号，可以在 [API密钥管理
-](https://console.cloud.tencent.com/cam/capi) 中获取 SecretId 和 SecretKey。
+> - 如果已有腾讯云账号，可以在 [API 密钥管理
+>   ](https://console.cloud.tencent.com/cam/capi) 中获取 SecretId 和 SecretKey。
 
 ### 还支持哪些组件？
 
