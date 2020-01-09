@@ -1,6 +1,5 @@
 const { Component } = require('@serverless/core')
-// const tencentAuth = require('serverless-tencent-auth-tool')
-const tencentAuth = require('/Users/dfounderliu/Desktop/component/experience/serverless-tencent-auth-tool')
+const tencentAuth = require('serverless-tencent-auth-tool')
 const util = require('util')
 const klawSync = require('klaw-sync')
 const path = require('path')
