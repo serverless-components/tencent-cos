@@ -4,7 +4,7 @@ Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless 
 
 &nbsp;
 
-* [请点击这里查看中文版部署文档](./README_CN.md)
+- [请点击这里查看中文版部署文档](./README_CN.md)
 
 &nbsp;
 
@@ -17,7 +17,7 @@ Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless 
 &nbsp;
 
 ### 1. Install
- 
+
 ```console
 $ npm install -g serverless
 ```
@@ -30,14 +30,16 @@ Just create `serverless.yml` and `.env` files
 $ touch serverless.yml
 $ touch .env # your Tencent API Keys
 ```
-Add the access keys of a [Tencent CAM Role](https://console.cloud.tencent.com/cam/capi) with `AdministratorAccess` in the `.env` file, using this format: 
+
+Add the access keys of a [Tencent CAM Role](https://console.cloud.tencent.com/cam/capi) with `AdministratorAccess` in the `.env` file, using this format:
 
 ```
 # .env
 TENCENT_SECRET_ID=123
 TENCENT_SECRET_KEY=123
 ```
-* If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first.
+
+- If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first.
 
 ### 3. Configure
 
@@ -50,8 +52,8 @@ myBucket:
     bucket: my-bucket
     region: ap-guangzhou
 ```
-* [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
 
+- [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cos/blob/master/docs/configure.md)
 
 ### 4. Deploy
 
@@ -71,7 +73,7 @@ $ sls --debug
   DEBUG ─ Ensuring no CORS are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
   DEBUG ─ Ensuring no Tags are set for "my-bucket-1300415943" bucket in the "ap-guangzhou" region.
 
-  myBucket: 
+  myBucket:
     bucket: my-bucket-1300415943
     region: ap-guangzhou
 
@@ -79,6 +81,8 @@ $ sls --debug
 ```
 
 ### 5. Remove
+
+**NOTE:** Removing the service will cause the used bucket to be emptied and removed as well. This operation cannot be undone.
 
 ```
 $ sls remove --debug
