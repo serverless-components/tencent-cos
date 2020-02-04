@@ -134,7 +134,12 @@ class TencentCOS extends Component {
 
     // login
     const auth = new tencentAuth()
-    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, 'tencent-cos')
+    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, {
+      client: 'tencent-cos',
+      remark: inputs.fromClientRemark,
+      project: this.context.instance ? this.context.instance.id : undefined,
+      action: 'default'
+    })
 
     inputs.bucket = this.confirmEnding(inputs.bucket, this.context.credentials.tencent.AppId)
       ? inputs.bucket
@@ -250,7 +255,12 @@ class TencentCOS extends Component {
     // if no data found in state, we try to remove whatever is in the inputs
     // login
     const auth = new tencentAuth()
-    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, 'tencent-cos')
+    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, {
+      client: 'tencent-cos',
+      remark: inputs.fromClientRemark,
+      project: this.context.instance ? this.context.instance.id : undefined,
+      action: 'remove'
+    })
 
     let bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region
@@ -323,7 +333,12 @@ class TencentCOS extends Component {
 
     // login
     const auth = new tencentAuth()
-    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, 'tencent-cos')
+    this.context.credentials.tencent = await auth.doAuth(this.context.credentials.tencent, {
+      client: 'tencent-cos',
+      remark: inputs.fromClientRemark,
+      project: this.context.instance ? this.context.instance.id : undefined,
+      action: 'upload'
+    })
 
     const bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region || 'ap-guangzhou'
