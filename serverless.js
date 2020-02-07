@@ -24,26 +24,15 @@ const getSdk = ({ SecretId, SecretKey, token, timestamp }) => {
     'deleteMultipleObject'
   ]
 
-  let cos
-  if (!token) {
-    cos = new COS({
-      SecretId,
-      SecretKey,
-      UserAgent: 'ServerlessComponent'
-    })
-  } else {
-    cos = new COS({
-      getAuthorization: function(option, callback) {
-        callback({
-          TmpSecretId: SecretId,
-          TmpSecretKey: SecretKey,
-          UserAgent: 'ServerlessComponent',
-          XCosSecurityToken: token,
-          ExpiredTime: timestamp
-        })
-      }
-    })
-  }
+  const cos = new COS({
+    SecretId: SecretId,
+    SecretKey: SecretKey,
+    TmpSecretId: SecretId,
+    TmpSecretKey: SecretKey,
+    XCosSecurityToken: token,
+    ExpiredTime: timestamp,
+    UserAgent: 'ServerlessComponent'
+  })
 
   return methods.reduce((accum, method) => {
     accum[method] = util.promisify(cos[method])
