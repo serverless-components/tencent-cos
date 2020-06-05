@@ -1,0 +1,15 @@
+org: orgDemo
+app: appDemo
+stage: dev
+component: cos
+name: cosDemo
+
+inputs:
+  src: ./files
+  targetDir: /
+  website: false
+  bucket: my-bucket
+  region: ap-guangzhou
+  protocol: https
+  acl:
+    permissions: public-read

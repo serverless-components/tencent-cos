@@ -1,0 +1,10 @@
+{
+  "name": "@serverless/cos",
+  "main": "./serverless.js",
+  "scripts": {},
+  "author": "Tencent Cloud, Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "tencent-component-toolkit": "^1.8.7"
+  }
+}
