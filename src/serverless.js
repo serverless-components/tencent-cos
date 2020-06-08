@@ -61,7 +61,10 @@ class ServerlessComopnent extends Component {
     const { region } = inputs
     const cos = new Cos(credentials, region)
 
-    const files = await this.unzip(inputs.src)
+    let files = null
+    if (inputs.src) {
+      files = await this.unzip(inputs.src)
+    }
 
     const appId = this.getAppId()
 
