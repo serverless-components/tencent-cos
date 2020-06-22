@@ -89,7 +89,8 @@ class ServerlessComopnent extends Component {
 
     const outputs = {
       region: region,
-      bucket: inputs.bucket
+      bucket: inputs.bucket,
+      cosOrigin: `${inputs.bucket}.cos.${region}.myqcloud.com`
     }
     if (inputs.website === true) {
       inputs.code = {
@@ -99,6 +100,7 @@ class ServerlessComopnent extends Component {
       }
       const websiteUrl = await cos.website(inputs)
       outputs.website = `${this.getDefaultProtocol(inputs.protocol)}://${websiteUrl}`
+      outputs.websiteOrigin = websiteUrl
     } else {
       try {
         // check website, if enable, disable it
