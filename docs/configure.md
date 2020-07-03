@@ -1,15 +1,15 @@
-# Configure document
+# 配置文档
 
-## Complete configuration
+## 完整配置
 
 ```yml
 # serverless.yml
 
-org: orgDemo
-app: appDemo
-stage: dev
-name: cos-demo
-component: cos
+component: cos # (必填) 组件名称，此处为 cos
+name: cos-demo # (必填) 实例名称
+org: orgDemo # (可选) 用于记录组织信息，默认值为您的腾讯云账户 appid
+app: appDemo # (可选) 该应用名称
+stage: dev # (可选) 用于区分环境信息，默认值为 dev
 
 inputs:
   src: ./
@@ -39,44 +39,45 @@ inputs:
       value: xyz
 ```
 
-## Configuration description
+## 配置说明
 
-Main param description
+主要函数说明
 
-| Param                           | Required/Optional | Default | Description                                                                                                             |
-| ------------------------------- | :---------------: | :-----: | :---------------------------------------------------------------------------------------------------------------------- |
-| bucket                          |     Required      |         | Bucket name, if you don't add the AppId suffix, it will be added automatically for you, capital letters are not allowed |
-| region                          |     Required      |         |                                                                                                                         |
-| src                             |     Optional      |         | File or directory you want to upload to bucket                                                                          |
-| targetDir                       |     Optional      |    /    | Target directory you want to upload to bucket, default is root path `/`                                                 |
-| website                         |     Optional      |  false  | Whether open website access                                                                                             |
-| protocol                        |     Optional      |  http   | Access protocol                                                                                                         |
-| [acl](#acl-param-description)   |     Optional      |         | Access control list                                                                                                     |
-| [cors](#cors-param-description) |     Optional      |         | Cross-origin resource sharing                                                                                           |
-| [tags](#tags-param-description) |     Optional      |         | Tag list                                                                                                                |
+| 参数      | 必填/可选 | 默认值  | 描述                                                            |
+| --------- | :-------: | :-----: | :-------------------------------------------------------------- |
+| bucket    |   必填    |         | 存储桶名称，如若不添加 AppId 后缀，则系统会自动添加，后缀为大写 |
+| region    |   必填    |         | 存储桶所属的区域                                                |
+| src       |   可选    |         | 要上传到存储桶的文件或目录                                      |
+| targetDir |   可选    |   `/`   | 要上传到存储桶的目标目录，默认目录是根路径 `/`                  |
+| website   |   可选    | `false` | 是否开放网站访问                                                |
+| protocol  |   可选    | `http`  | 访问协议                                                        |
+| acl       |   可选    |         | 访问控制配置，配置参数参考[acl 参数说明](#acl-参数说明)         |
+| cors      |   可选    |         | 跨域资源共享配置，配置参数参考[cors 参数说明](#cors-参数说明)   |
+| tags      |   可选    |         | 标签配置，配置参数参考[tags 参数说明](#tags-参数说明)           |
 
-### acl param description
+### acl 参数说明
 
-| Param            | Required/Optional | Description                                                                                                                                                                                                   |
-| ---------------- | :---------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| permissions      |     Optional      | This defines the access control list (ACL) attribute of the bucket. For the enumerated values such as private and public-read, see the Preset ACL for Buckets section in ACL Overview. Default value: private |
-| grantRead        |     Optional      | This grants the grantee permission to read the bucket in the format of id="\[OwnerUin]", such as id="100000000001".                                                                                           |
-| grantWrite       |     Optional      | This grants the grantee permission to write to the bucket in the format of id="\[OwnerUin]", such as id="100000000001".                                                                                       |
-| grantFullControl |     Optional      | This grants the grantee full permission to manipulate the bucket in the format of id="\[OwnerUin]", such as id="100000000001".                                                                                |
+| 参数             | 必填/可选 | 描述                                                                                                                                                                                      |
+| ---------------- | :-------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| permissions      |   可选    | 定义存储桶的访问控制列表(ACL)属性。 有关枚举值（如 private、public-read），请参阅[ACL 概述](https://cloud.tencent.com/document/product/436/30752)中的“存储桶的操作”部分。 默认值: private |
+| grantRead        |   可选    | 授予读取权限，以 id =“\[OwnerUin]”格式授权对存储桶读取的权限，例如 id="100000000001"                                                                                                      |
+| grantWrite       |   可选    | 授予写入权限，以 id="\[OwnerUin]"格式授权对存储桶写入的权限，例如 id="100000000001"                                                                                                       |
+| grantFullControl |   可选    | 授予全权控制权限，以 id="\[OwnerUin]"格式授权对存储桶全权控制的权限，例如 id="100000000001"                                                                                               |
 
-### cors param description
+### cors 参数说明
 
-| Param          | Required/Optional | Description                                                                                                                                      |
-| -------------- | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| id             |     Required      | Configured rule ID; optional                                                                                                                     |
-| allowedMethods |     Required      | Allowed HTTP operations. Enumerated values: GET, PUT, HEAD, POST, DELETE                                                                         |
-| allowedOrigins |     Required      | Allowed origin in the format of protocol://domain name\[:port number], such as http://www.qq.com. Wildcard \* is supported                       |
-| allowedHeaders |     Required      | Tells the server what custom HTTP request headers can be used for subsequent requests when the OPTIONS request is sent. Wildcard \* is supported |
-| exposeHeaders  |     Required      | Sets custom header information from the server that the browser can receive                                                                      |
+| 参数           | 必填/可选 | 描述                                                                                          |
+| -------------- | :-------: | :-------------------------------------------------------------------------------------------- |
+| id             |   可选    | 配置规则的 ID，可选填                                                                         |
+| allowedMethods |   必填    | 允许的 HTTP 操作，枚举值：GET，PUT，HEAD，POST，DELETE                                        |
+| allowedOrigins |   必填    | 允许的访问来源，支持通配符\*，格式为：`协议://域名[:端口]`，例如：http://www.qq.com           |
+| allowedHeaders |   必填    | 在发送 OPTIONS 请求时告知服务端，接下来的请求可以使用哪些自定义的 HTTP 请求头部，支持通配符\* |
+| exposeHeaders  |   必填    | 设置浏览器可以接收到的来自服务器端的自定义头部信息                                            |
+| maxAgeSeconds  |   必填    | 设置 OPTIONS 请求得到结果的有效期                                                             |
 
-### tags param description
+### tags 参数说明
 
-| Param | Required/Optional | Description                                                                                                                                           |
-| ----- | :---------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| key   |     Required      | Tag key, which can contain up to 128 bytes of letters, digits, spaces, plus signs, minus signs, underscores, equal signs, dots, colons, and slashes   |
-| value |     Required      | Tag value, which can contain up to 256 bytes of letters, digits, spaces, plus signs, minus signs, underscores, equal signs, dots, colons, and slashes |
+| 参数  | 必填/可选 | 描述                                                                                                    |
+| ----- | :-------: | :------------------------------------------------------------------------------------------------------ |
+| key   |   必填    | 标签的 Key，长度不超过 128 字节, 支持英文字母、数字、空格、加号、减号、下划线、等号、点号、冒号、斜线   |
+| value |   必填    | 标签的 Value，长度不超过 256 字节, 支持英文字母、数字、空格、加号、减号、下划线、等号、点号、冒号、斜线 |
