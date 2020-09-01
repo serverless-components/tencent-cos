@@ -18,9 +18,9 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
+      "pre-commit": "ygsec && lint-staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-push": "npm run lint:fix && npm run prettier:fix"
+      "pre-push": "ygsec && npm run lint:fix && npm run prettier:fix"
     }
   },
   "lint-staged": {
@@ -45,6 +45,7 @@
     "@semantic-release/npm": "^7.0.4",
     "@semantic-release/release-notes-generator": "^9.0.1",
     "@serverless/platform-client-china": "^1.0.19",
+    "@ygkit/secure": "^0.0.2",
     "axios": "^0.19.2",
     "babel-eslint": "^10.1.0",
     "dotenv": "^8.2.0",
