@@ -53,7 +53,7 @@ inputs:
   region: ap-guangzhou
 ```
 
-- [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cos/tree/v2/docs/configure.md)
+- [Click here to view the configuration document](/docs/configure.md)
 
 ### 4. Deploy
 
