@@ -1,3 +1,10 @@
+## [0.0.6](https://github.com/serverless-components/tencent-cos/compare/v0.0.5...v0.0.6) (2020-09-02)
+
+
+### Bug Fixes
+
+* update tencnet-component-toolkit for api mark ([665f95a](https://github.com/serverless-components/tencent-cos/commit/665f95a6cfa834d7454caac22f1c0e8039451ae5))
+
 ## [0.0.5](https://github.com/serverless-components/tencent-cos/compare/v0.0.4...v0.0.5) (2020-09-01)
 
 
