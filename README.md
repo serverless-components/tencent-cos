@@ -1,6 +1,6 @@
 # 腾讯云对象存储 COS 组件
 
-简体中文 | [English](./README.en.md)
+简体中文 | [English](https://github.com/serverless-components/tencent-cos/tree/master/README.en.md)
 
 ## 简介
 
@@ -45,7 +45,7 @@ inputs:
   region: ap-guangzhou
 ```
 
-- [点击此处查看配置文档](/docs/configure.md)
+- [点击此处查看配置文档](https://github.com/serverless-components/tencent-cos/tree/master/docs/configure.md)
 
 ### 3. 部署
 
@@ -88,3 +88,9 @@ TENCENT_SECRET_KEY=123
 ### 还支持哪些组件？
 
 可以在 [Serverless Components](https://github.com/serverless/components) repo 中查询更多组件的信息。
+
+## License
+
+MIT License
+
+Copyright (c) 2020 Tencent Cloud, Inc.

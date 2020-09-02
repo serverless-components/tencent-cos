@@ -1,6 +1,6 @@
 # Tencent Cloud Object Storage Component
 
-[简体中文](./README.md) | English
+[简体中文](https://github.com/serverless-components/tencent-cos/tree/master/README.md) | English
 
 Instantly deploy & manage Tencent Cloud Object Storage buckets with [Serverless Components](https://github.com/serverless/components).
 
@@ -53,7 +53,7 @@ inputs:
   region: ap-guangzhou
 ```
 
-- [Click here to view the configuration document](/docs/configure.md)
+- [Click here to view the configuration document](https://github.com/serverless-components/tencent-cos/tree/master/docs/configure.md)
 
 ### 4. Deploy
 
@@ -72,3 +72,9 @@ $ sls remove
 ### New to Components?
 
 Checkout the [Serverless Components](https://github.com/serverless/components) repo for more information.
+
+## License
+
+MIT License
+
+Copyright (c) 2020 Tencent Cloud, Inc.
