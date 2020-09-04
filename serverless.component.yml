@@ -1,10 +1,10 @@
 name: cos
-version: 0.0.6
-author: Tencent Cloud, Inc.
-org: Tencent Cloud, Inc.
+version: 0.0.7
+author: 'Tencent Cloud, Inc.'
+org: 'Tencent Cloud, Inc.'
 description: Deploy Tencent COS.
-keywords: tencent, serverless, cos
-repo: https://github.com/serverless-components/tencent-cos
-readme: https://github.com/serverless-components/tencent-cos/tree/master/README.md
+keywords: 'tencent, serverless, cos'
+repo: 'https://github.com/serverless-components/tencent-cos'
+readme: 'https://github.com/serverless-components/tencent-cos/tree/master/README.md'
 license: MIT
 main: ./src
