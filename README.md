@@ -1,7 +1,5 @@
 # 腾讯云对象存储 COS 组件
 
-简体中文 | [English](https://github.com/serverless-components/tencent-cos/tree/master/README.en.md)
-
 ## 简介
 
 通过对象存储 COS 组件，可以快速，方便的创建，配置和管理腾讯云的 COS 存储桶
@@ -34,14 +32,14 @@ $ touch serverless.yml
 ```yml
 # serverless.yml
 
-org: orgDemo
 app: appDemo
 stage: dev
+
 component: cos
 name: cosDemo
 
 inputs:
-  bucket: my-bucket
+  bucket: bucket-demo
   region: ap-guangzhou
 ```
 
@@ -85,9 +83,9 @@ TENCENT_SECRET_KEY=123
 
 > 如果没有腾讯云账号，请先 [注册新账号](https://cloud.tencent.com/register)。如果已有腾讯云账号，可以在 [API 密钥管理](https://console.cloud.tencent.com/cam/capi) 中获取 SecretId 和 SecretKey。
 
-### 还支持哪些组件？
+### 使用文档
 
-可以在 [Serverless Components](https://github.com/serverless/components) repo 中查询更多组件的信息。
+[使用文档](./docs/README.md)
 
 ## License
 

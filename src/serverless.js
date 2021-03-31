@@ -1,15 +1,14 @@
 const { Component } = require('@serverless/core')
 const { Cos } = require('tencent-component-toolkit')
-const { TypeError } = require('tencent-component-toolkit/src/utils/error')
-const util = require('util')
-const CONFIGS = require('./config')
+const { ApiTypeError } = require('tencent-component-toolkit/lib/utils/error')
+const { formatInputs } = require('./utils')
 
 class ServerlessComopnent extends Component {
   getCredentials() {
     const { tmpSecrets } = this.credentials.tencent
 
     if (!tmpSecrets || !tmpSecrets.TmpSecretId) {
-      throw new TypeError(
+      throw new ApiTypeError(
         'CREDENTIAL',
         'Cannot get secretId/Key, your account could be sub-account and does not have the access to use SLS_QcsRole, please make sure the role exists first, then visit https://cloud.tencent.com/document/product/1154/43006, follow the instructions to bind the role to your account.'
       )
@@ -34,26 +33,39 @@ class ServerlessComopnent extends Component {
   }
 
   async getCosWebsite(cos, region, bucket) {
-    const getBucketWebsite = util.promisify(cos.cosClient.getBucketWebsite.bind(cos.cosClient))
-    const info = await getBucketWebsite({
-      Bucket: bucket,
-      Region: region
+    return new Promise((resolve, reject) => {
+      cos.cosClient.getBucketWebsite(
+        {
+          Bucket: bucket,
+          Region: region
+        },
+        (err, info) => {
+          if (err) {
+            reject(err)
+            return
+          }
+
+          resolve(info && info.WebsiteConfiguration)
+        }
+      )
     })
-    return info && info.WebsiteConfiguration
   }
 
   async deleteCosWebsite(cos, region, bucket) {
-    const deleteBucketWebsite = util.promisify(
-      cos.cosClient.deleteBucketWebsite.bind(cos.cosClient)
-    )
-    try {
-      await deleteBucketWebsite({
-        Bucket: bucket,
-        Region: region
-      })
-    } catch (e) {
-      console.log(e)
-    }
+    return new Promise((resolve) => {
+      cos.cosClient.deleteBucketWebsite(
+        {
+          Bucket: bucket,
+          Region: region
+        },
+        (err) => {
+          if (err) {
+            console.log(err)
+          }
+          resolve(true)
+        }
+      )
+    })
   }
 
   async deploy(inputs) {
@@ -63,61 +75,34 @@ class ServerlessComopnent extends Component {
     const { region } = inputs
     const cos = new Cos(credentials, region)
 
-    let files = null
-    if (inputs.src) {
-      files = await this.unzip(inputs.src)
-    }
-
-    const appId = this.getAppId()
-
-    inputs.bucket =
-      inputs.bucket.indexOf(`-${appId}`) === -1 ? `${inputs.bucket}-${appId}` : inputs.bucket
-
-    inputs.force = true
-
-    if (inputs.acl) {
-      inputs.acl = {
-        permissions: inputs.acl.permissions || 'private',
-        grantRead: inputs.acl.grantRead || '',
-        grantWrite: inputs.acl.grantWrite || '',
-        grantFullControl: inputs.acl.grantFullControl || ''
-      }
-    }
-
-    // upload to target directory
-    inputs.keyPrefix = inputs.targetDir || '/'
+    const deployInputs = await formatInputs(this, inputs)
+    const { bucket, protocol } = deployInputs
 
     const outputs = {
-      region: region,
-      bucket: inputs.bucket,
-      cosOrigin: `${inputs.bucket}.cos.${region}.myqcloud.com`
+      region,
+      bucket,
+      cosOrigin: `${bucket}.cos.${region}.myqcloud.com`
     }
+
     if (inputs.website === true) {
-      inputs.code = {
-        src: files,
-        index: inputs.indexPage || CONFIGS.indexPage,
-        error: inputs.errorPage || CONFIGS.errorPage
-      }
-      const websiteUrl = await cos.website(inputs)
-      outputs.website = `${this.getDefaultProtocol(inputs.protocol)}://${websiteUrl}`
+      const websiteUrl = await cos.website(deployInputs)
+      outputs.website = `${this.getDefaultProtocol(protocol)}://${websiteUrl}`
       outputs.websiteOrigin = websiteUrl
     } else {
       try {
         // check website, if enable, disable it
-        const websiteInfo = await this.getCosWebsite(cos, region, inputs.bucket)
+        const websiteInfo = await this.getCosWebsite(cos, region, bucket)
         if (websiteInfo) {
-          await this.deleteCosWebsite(cos, region, inputs.bucket)
+          await this.deleteCosWebsite(cos, region, bucket)
         }
       } catch (e) {}
 
-      inputs.src = files
-      await cos.deploy(inputs)
-      outputs.url = `${this.getDefaultProtocol(inputs.protocol)}://${
-        inputs.bucket
-      }.cos.${region}.myqcloud.com`
+      await cos.deploy(deployInputs)
+      outputs.url = `${this.getDefaultProtocol(protocol)}://${bucket}.cos.${region}.myqcloud.com`
     }
 
     this.state = inputs
+
     await this.save()
 
     return outputs
