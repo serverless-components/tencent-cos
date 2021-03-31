@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/serverless-components/tencent-cos/compare/v0.1.0...v0.2.0) (2021-03-31)
+
+
+### Features
+
+* support policy and optimize deploy flow ([#11](https://github.com/serverless-components/tencent-cos/issues/11)) ([f4608ad](https://github.com/serverless-components/tencent-cos/commit/f4608add7ce111ce3affe52ae97e5f92bb59a35f))
+
 ## [0.0.7](https://github.com/serverless-components/tencent-cos/compare/v0.0.6...v0.0.7) (2020-09-07)
 
 
