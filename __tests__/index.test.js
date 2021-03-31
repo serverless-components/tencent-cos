@@ -18,14 +18,13 @@ const instanceYaml = {
   stage: 'dev',
   inputs: {
     src: {
-      src: path.join(__dirname, '..', 'example/src'),
+      src: path.join(__dirname, '..', 'example/src')
     },
     bucket: 'cos-integration-test',
     region: 'ap-guangzhou',
     acl: {
       permissions: 'public-read'
     }
-
   }
 }
 
@@ -41,7 +40,7 @@ describe('COS', () => {
     expect(instance.outputs.region).toEqual(instanceYaml.inputs.region)
     // exist page
     const { data } = await axios.get(`${instance.outputs.url}/index.html`)
-    expect(data).toContain('Serverless');
+    expect(data).toContain('Serverless')
   })
 
   it('deploy website', async () => {
@@ -54,14 +53,18 @@ describe('COS', () => {
     expect(instance.outputs.region).toEqual(instanceYaml.inputs.region)
     // exist page
     const { data } = await axios.get(instance.outputs.website)
-    expect(data).toContain('Serverless');
+    expect(data).toContain('Serverless')
   })
 
   it('remove success', async () => {
     await sdk.remove(instanceYaml, credentials)
-    result = await sdk.getInstance(instanceYaml.org, instanceYaml.stage, instanceYaml.app, instanceYaml.name)
+    const result = await sdk.getInstance(
+      instanceYaml.org,
+      instanceYaml.stage,
+      instanceYaml.app,
+      instanceYaml.name
+    )
 
     expect(result.instance.instanceStatus).toEqual('inactive')
   })
-
 })
