@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/serverless-components/tencent-cos/compare/v0.2.1...v0.2.2) (2021-04-02)
+
+
+### Bug Fixes
+
+* remove logical ([3a88cf9](https://github.com/serverless-components/tencent-cos/commit/3a88cf9c5e6a0ae938f31f328911f9118fd1ddfe))
+
 ## [0.2.1](https://github.com/serverless-components/tencent-cos/compare/v0.2.0...v0.2.1) (2021-04-02)
 
 
