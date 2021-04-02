@@ -101,7 +101,10 @@ class ServerlessComopnent extends Component {
       outputs.url = `${this.getDefaultProtocol(protocol)}://${bucket}.cos.${region}.myqcloud.com`
     }
 
-    this.state = inputs
+    this.state = {
+      region,
+      bucket
+    }
 
     await this.save()
 
