@@ -9,7 +9,8 @@ async function formatInputs(instance, inputs) {
     replace: inputs.replace === true,
     bucket,
     protocol: inputs.protocol || 'https',
-    keyPrefix: inputs.targetDir || '/'
+    keyPrefix: inputs.targetDir || '/',
+    tags: inputs.tags
   }
   let files = null
   if (inputs.src) {
