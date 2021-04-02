@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/serverless-components/tencent-cos/compare/v0.2.0...v0.2.1) (2021-04-02)
+
+
+### Bug Fixes
+
+* tag create ([ddc4796](https://github.com/serverless-components/tencent-cos/commit/ddc479690d94837fe5278aed38902a25ed995a55))
+
 # [0.2.0](https://github.com/serverless-components/tencent-cos/compare/v0.1.0...v0.2.0) (2021-03-31)
 
 
