@@ -14,3 +14,6 @@ inputs:
   protocol: https
   acl:
     permissions: public-read
+  tags:
+    - key: slstest
+      value: slstest
