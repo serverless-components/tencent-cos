@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/serverless-components/tencent-cos/compare/v0.2.2...v0.2.3) (2021-04-15)
+
+
+### Bug Fixes
+
+* cors config ([2a061ed](https://github.com/serverless-components/tencent-cos/commit/2a061ed51c33a04bbd762d5ce546f1554505ebca))
+
 ## [0.2.2](https://github.com/serverless-components/tencent-cos/compare/v0.2.1...v0.2.2) (2021-04-02)
 
 
