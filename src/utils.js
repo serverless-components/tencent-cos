@@ -33,6 +33,10 @@ async function formatInputs(instance, inputs) {
     }
   }
 
+  if (inputs.cors) {
+    formatedInputs.cors = inputs.cors
+  }
+
   if (inputs.website === true) {
     const websiteConfig = inputs.websiteConfig || {}
     formatedInputs.ignoreHtmlExt = websiteConfig.ignoreHtmlExt

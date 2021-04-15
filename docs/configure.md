@@ -33,16 +33,15 @@ inputs:
     grantWrite: id="1234567"
     grantFullControl: id="1234567"
   cors:
-    - id: abc
-      maxAgeSeconds: '10'
+    - maxAgeSeconds: 0
       allowedMethods:
         - GET
       allowedOrigins:
-        - https://tencent.com
+        - '*'
       allowedHeaders:
-        - FIRST_ALLOWED_HEADER
+        - '*'
       exposeHeaders:
-        - FIRST_EXPOSED_HEADER
+        - ''
   tags:
     - key: abc
       value: xyz
