@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/serverless-components/tencent-cos/compare/v0.2.3...v0.2.4) (2021-07-21)
+
+
+### Bug Fixes
+
+* update deps ([9444bf4](https://github.com/serverless-components/tencent-cos/commit/9444bf4bc46b8118413219712e424e5ca6534c1e))
+
 ## [0.2.3](https://github.com/serverless-components/tencent-cos/compare/v0.2.2...v0.2.3) (2021-04-15)
 
 
