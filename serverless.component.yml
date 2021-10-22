@@ -2,7 +2,7 @@ name: cos
 version: 0.2.4
 author: 'Tencent Cloud, Inc.'
 org: 'Tencent Cloud, Inc.'
-description: Deploy Tencent COS.
+description: COS 网关组件， 允许用户创建部署一个对象存储(COS)实例。配合项目需要管理腾讯云的 COS 存储桶。
 keywords: 'tencent, serverless, cos'
 repo: 'https://github.com/serverless-components/tencent-cos'
 readme: 'https://github.com/serverless-components/tencent-cos/tree/master/README.md'
